@@ -3,7 +3,7 @@ import random
 
 pygame.init()
 
-screen = pygame.display.set_mode((1200,600))
+screen = pygame.display.set_mode((840,400))
 pygame.display.set_caption("1vs1 shooter game")
 screen.fill('white')
 clock = pygame.time.Clock()
@@ -12,7 +12,7 @@ clock = pygame.time.Clock()
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 # Define font
-text_font = pygame.font.Font(r'font\Novecentosanswide-DemiBold.otf' , 18)
+text_font = pygame.font.Font(r'font\Novecentosanswide-DemiBold.otf' , 14)
 #player class
 class Player:
     def __init__(self,name ,color , time , score , bullet ):
@@ -30,7 +30,6 @@ class Player:
 
     def collied(self):
         self.score += 10
-        self.bullet -= 1
 
 class Bullet:
     def __init__(self, x, y, color):
@@ -55,31 +54,56 @@ class Aim:
         self.rect.x += dx
         self.rect.y += dy
 
-aim1 = Aim(random.randint(20,1180),random.randint(20,1180) ,  Player1.color)
-aim2 = Aim(random.randint(20,1180),random.randint(60,580), Player2.color)
+aim1 = Aim(random.randint(20,820),random.randint(20,380) ,  Player1.color)
+aim2 = Aim(random.randint(20,820),random.randint(20,380), Player2.color)
 #apples
 apple1_surf = pygame.image.load('graphics/apple.png')
 apple1_surf = pygame.transform.scale(apple1_surf, (50,50))
-apple1_rect = apple1_surf.get_rect(center=(random.randint(20,1180),random.randint(60,580)))
+apple1_rect = apple1_surf.get_rect(center=(random.randint(20,820),random.randint(20,380)))
 apple2_surf = pygame.image.load('graphics/apple.png')
 apple2_surf = pygame.transform.scale(apple2_surf, (50,50))
-apple2_rect = apple2_surf.get_rect(center=(random.randint(20,1180),random.randint(60,580)))
+apple2_rect = apple2_surf.get_rect(center=(random.randint(20,820),random.randint(20,380)))
 apple3_surf = pygame.image.load('graphics/apple.png')
 apple3_surf= pygame.transform.scale(apple3_surf, (50,50))
-apple3_rect = apple3_surf.get_rect(center=(random.randint(20,1180),random.randint(60,580)))
+apple3_rect = apple3_surf.get_rect(center=(random.randint(20,820),random.randint(20,380)))
 
 #bullet
-bullet = pygame.image.load('graphics/bullets.png').convert_alpha()
-bullet = pygame.transform.scale(bullet, (50,50))
-bullet_rect = bullet.get_rect(center=(random.randint(20,1180),random.randint(60,580)))
+extra_bullet = pygame.image.load('graphics/bullets.png').convert_alpha()
+extra_bulletbullet = pygame.transform.scale(extra_bullet, (50,50))
+extra_bullet_rect = extra_bullet.get_rect(center=(random.randint(20,820),random.randint(20,380)))
 bullets = []
 #extra time
 extra_time = pygame.image.load('graphics/extra-time.png').convert_alpha()
 extra_time = pygame.transform.scale(extra_time , (50,50))
-etime_rect = extra_time.get_rect(center = (random.randint(20,1180),random.randint(60,580)))
+etime_rect = extra_time.get_rect(center = (random.randint(20,820),random.randint(20,380)))
 #aim values
 aim1_shoot = False
 aim2_shoot = False
+#time manager
+base_time = pygame.time.get_ticks()
+def time_manager():
+    global base_time
+    current_time = pygame.time.get_ticks()
+    delta_time =  (current_time-base_time)//1000
+    if delta_time >0 :
+        Player1.time -= delta_time
+        Player2.time -= delta_time
+        base_time = current_time
+        if Player1.time < 0:
+            Player1.time =0
+        if Player2.time <0:
+            Player2.time = 0
+
+def end_game():
+    if (Player1.time == 0 and Player2.time == 0 ) or (Player1.bullet == 0 and Player2.bullet ==0):
+        if Player1.score > Player2.score:
+            print(f'{Player1.name} won!')
+            exit()
+        if Player2.score > Player1.score:
+            print(f'{Player2.name} won!')
+            exit()
+
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -87,48 +111,50 @@ while True:
             exit()
         if event.type == pygame.KEYDOWN:
             if event.key  == pygame.K_LEFT:
-                aim1.move(-5 , 0)
+                aim1.move(-8 , 0)
             if event.key == pygame.K_RIGHT:
-                aim1.move(5 , 0)
+                aim1.move(8 , 0)
             if event.key == pygame.K_DOWN:
-                aim1.move(0 , 5)
+                aim1.move(0 , 8)
             if event.key == pygame.K_UP:
-                aim1.move(0 , -5)
+                aim1.move(0 , -8)
             if event.key == pygame.K_w:
-                aim2.move(0,-5)
+                aim2.move(0,-8)
             if event.key == pygame.K_s:
-                aim2.move(0,5)
+                aim2.move(0,8)
             if event.key == pygame.K_d:
-                aim2.move(5 , 0)
+                aim2.move(8 , 0)
             if event.key == pygame.K_a:
-                aim2.move(-5,0)
+                aim2.move(-8,0)
             if event.key == pygame.K_TAB and Player2.bullet >0:
                 aim2_shoot = True
+                Player2.bullet -= 1
                 bullets.append(Bullet(aim2.rect.x , aim2.rect.y , Player2.color))
             if event.key == pygame.K_SPACE and Player1.bullet >0 :
                 aim1_shoot = True
+                Player1.bullet -= 1
                 bullets.append(Bullet(aim1.rect.x , aim1.rect.y , Player1.color))
     if apple1_rect.colliderect(aim1.rect) and aim1_shoot == True:
         Player1.collied()
-        apple1_rect = apple1_surf.get_rect(center=(random.randint(20,1180),random.randint(60,580)))
+        apple1_rect = apple1_surf.get_rect(center=(random.randint(20,820),random.randint(20,380)))
     if apple2_rect.colliderect(aim1.rect) and aim1_shoot == True:
         Player1.collied()
-        apple2_rect = apple2_surf.get_rect(center=(random.randint(20,1180),random.randint(60,580)))
+        apple2_rect = apple2_surf.get_rect(center=(random.randint(20,820),random.randint(20,380)))
     if apple3_rect.colliderect(aim1.rect) and aim1_shoot == True:
         Player1.collied()
-        apple3_rect = apple3_surf.get_rect(center=(random.randint(20,1180),random.randint(60,580)))
+        apple3_rect = apple3_surf.get_rect(center=(random.randint(20,820),random.randint(20,380)))
     if apple1_rect.colliderect(aim2.rect) and aim2_shoot == True:
         Player2.collied()
-        apple1_rect = apple1_surf.get_rect(center=(random.randint(20,1180),random.randint(60,580)))
+        apple1_rect = apple1_surf.get_rect(center=(random.randint(20,820),random.randint(20,380)))
     if apple2_rect.colliderect(aim2.rect) and aim2_shoot == True:
         Player2.collied()
-        apple2_rect = apple2_surf.get_rect(center=(random.randint(20,1180),random.randint(60,580)))
+        apple2_rect = apple2_surf.get_rect(center=(random.randint(20,820),random.randint(20,380)))
     if apple3_rect.colliderect(aim2.rect) and aim2_shoot == True:
         Player2.collied()
-        apple3_rect = apple3_surf.get_rect(center=(random.randint(20,1180),random.randint(60,580)))
+        apple3_rect = apple3_surf.get_rect(center=(random.randint(20,820),random.randint(20,380)))
     screen.fill('white')   
-    Player1.status(260,25)
-    Player2.status(820,25)
+    Player1.status(210,10)
+    Player2.status(210,20)
     screen.blit(apple1_surf, apple1_rect)
     screen.blit(apple2_surf, apple2_rect)
     screen.blit(apple3_surf, apple3_rect)
@@ -139,5 +165,7 @@ while True:
     # screen.blit(extra_time , etime_rect)
     aim1_shoot = False
     aim2_shoot = False
+    time_manager()
+    # end_game()
     pygame.display.update()
     clock.tick(60)
