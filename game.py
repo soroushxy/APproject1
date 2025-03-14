@@ -68,14 +68,33 @@ apple3_surf= pygame.transform.scale(apple3_surf, (50,50))
 apple3_rect = apple3_surf.get_rect(center=(random.randint(20,820),random.randint(20,380)))
 
 #bullet
-extra_bullet = pygame.image.load('graphics/bullets.png').convert_alpha()
-extra_bulletbullet = pygame.transform.scale(extra_bullet, (50,50))
-extra_bullet_rect = extra_bullet.get_rect(center=(random.randint(20,820),random.randint(20,380)))
+class Extra_bullet:
+    def __init__(self):
+        self.extra_bullet = pygame.image.load('graphics/bullets.png').convert_alpha()
+        self.extra_bullet = pygame.transform.scale(self.extra_bullet, (50,50))
+        self.extra_bullet_rect = self.extra_bullet.get_rect(center=(random.randint(20,820),random.randint(20,380)))
+    def collied(player):
+        player.time += 10
+extra_bullet1 = Extra_bullet()
+extra_bullet1_value = True
+extra_bullet2 = Extra_bullet()
+extra_bullet2_value = True
 bullets = []
 #extra time
-extra_time = pygame.image.load('graphics/extra-time.png').convert_alpha()
-extra_time = pygame.transform.scale(extra_time , (50,50))
-etime_rect = extra_time.get_rect(center = (random.randint(20,820),random.randint(20,380)))
+class Extra_time:
+    def __init__(self):
+        self.extra_time = pygame.image.load('graphics/extra-time.png').convert_alpha()
+        self.extra_time = pygame.transform.scale(self.extra_time, (50,50))
+        self.extra_time_rect = self.extra_time.get_rect(center=(random.randint(20,820),random.randint(20,380)))
+    
+    def collied(player):
+        player.time += 10
+
+extra_time1 =  Extra_time()
+extra_time1_value = True
+extra_time2 = Extra_time()
+extra_time2_value = True
+
 #aim values
 aim1_shoot = False
 aim2_shoot = False
@@ -152,7 +171,48 @@ while True:
     if apple3_rect.colliderect(aim2.rect) and aim2_shoot == True:
         Player2.collied()
         apple3_rect = apple3_surf.get_rect(center=(random.randint(20,820),random.randint(20,380)))
+    if extra_time1.extra_time_rect.colliderect(aim1.rect) and aim1_shoot and extra_time1_value and Player1.time < 40 :
+        Player1.time += 10
+        extra_time1_value = False
+        # if Player1.time > 40:
+        #     extra_time1_value = True
+    if extra_time1.extra_time_rect.colliderect(aim2.rect) and aim2_shoot and extra_time1_value and Player1.time < 40 :
+        Player2.time += 10
+        extra_time1_value = False
+        # if Player2.time > 40:
+        #     extra_time1_value = True
+    if extra_time2.extra_time_rect.colliderect(aim1.rect) and aim1_shoot and extra_time2_value and Player2.time < 40 :
+        Player1.time += 10
+        extra_time2_value = False
+        # if Player1.time > 40:
+        #     extra_time2_value = True
+    if extra_time2.extra_time_rect.colliderect(aim2.rect) and aim2_shoot and extra_time2_value and Player2.time < 40 :
+        Player2.time += 10
+        extra_time2_value = False
+        # if Player2.time > 40 :
+        #     extra_time2_value = True
+    if extra_bullet1.extra_bullet_rect.colliderect(aim1.rect) and aim1_shoot and extra_bullet1_value and Player1.bullet < 6:
+        Player1.bullet += 5
+        extra_bullet1_value = False
+    if extra_bullet1.extra_bullet_rect.colliderect(aim2.rect) and aim2_shoot and extra_bullet1_value and Player1.bullet < 6:
+        Player2.bullet += 5
+        extra_bullet1_value =False
+    if extra_bullet2.extra_bullet_rect.colliderect(aim1.rect) and aim1_shoot and extra_bullet2_value and Player2.bullet < 6:
+        Player1.bullet += 5
+        extra_bullet2_value = False
+    if extra_bullet2.extra_bullet_rect.colliderect(aim2.rect) and aim2_shoot and extra_bullet2_value and Player2.bullet < 6:
+        Player2.bullet += 5
+        extra_bullet2_value = False
+
     screen.fill('white')   
+    if Player1.time < 40 and extra_time1_value :
+        screen.blit(extra_time1.extra_time , extra_time1.extra_time_rect)
+    if Player2.time < 40 and extra_time2_value:
+        screen.blit(extra_time2.extra_time , extra_time2.extra_time_rect)
+    if Player1.bullet < 6 and extra_bullet1_value:
+        screen.blit(extra_bullet1.extra_bullet , extra_bullet1.extra_bullet_rect)
+    if Player2.bullet < 6 and extra_bullet2_value:
+        screen.blit(extra_bullet2.extra_bullet , extra_bullet2.extra_bullet_rect)
     Player1.status(210,10)
     Player2.status(210,20)
     screen.blit(apple1_surf, apple1_rect)
