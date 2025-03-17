@@ -42,7 +42,8 @@ class UserManager:
         if user:
             return True, "Login successful!"
         return False, "Invalid username \n or password!"
-    
+
+# start pygame and graphic
 class LoginSignupApp:
     def __init__(self):
         pygame.init()
@@ -78,3 +79,70 @@ class LoginSignupApp:
         self.screen.blit(text_surface, (130, 200))
         pygame.display.update()
         pygame.time.delay(3000)
+
+    # main loop of running the game : 
+    def run(self):
+        running = True
+        self.error_message = ""  # متغیر برای ذخیره پیام خطا
+        error_timer = 0  # متغیر برای زمان نمایش پیام
+        
+        while running:
+            time_delta = self.clock.tick(30) / 1000.0
+            self.screen.fill((25, 50, 50))
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                if event.type == pygame_gui.UI_BUTTON_PRESSED:
+                    if event.ui_element == self.signup_button:
+                        username = self.username_entry.get_text().strip()
+                        password = self.password_entry.get_text().strip()
+                        email = self.email_entry.get_text().strip()
+
+                        if not username or not password or not email:
+                            self.error_message = "All fields are required!"
+                            error_timer = pygame.time.get_ticks()  # ذخیره زمان فعلی
+                        else:
+                            success, msg = self.user_manager.signup(username, password, email)
+                            self.error_message = msg
+                            error_timer = pygame.time.get_ticks()
+                            if success:
+                                self.create_login_ui()
+                                
+                    elif event.ui_element == self.switch_to_login_button:
+                        self.create_login_ui()
+                    elif event.ui_element == self.login_button:
+                        username = self.username_entry.get_text().strip()
+                        password = self.password_entry.get_text().strip()
+
+                        if not username or not password:
+                            self.error_message = "Username and password are required!"
+                            error_timer = pygame.time.get_ticks()
+                        else:
+                            success, msg = self.user_manager.login(username, password)
+                            self.error_message = msg
+                            error_timer = pygame.time.get_ticks()
+                            if success:
+                                running = False
+                                
+                    elif event.ui_element == self.switch_to_signup_button:
+                        self.create_signup_ui()
+                
+                self.manager.process_events(event)
+            
+            self.manager.update(time_delta)
+            self.manager.draw_ui(self.screen)
+            
+           
+            if self.error_message:
+                font = pygame.font.Font(None, 24)
+                text_surface = font.render(self.error_message, True, (255, 250, 250))
+                self.screen.blit(text_surface, (120, self.HEIGHT - 100))  
+
+          
+                if pygame.time.get_ticks() - error_timer > 2000:
+                    self.error_message = ""
+
+            pygame.display.update()
+
+        pygame.quit()
