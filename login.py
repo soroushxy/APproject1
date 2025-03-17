@@ -146,3 +146,18 @@ class LoginSignupApp:
             pygame.display.update()
 
         pygame.quit()
+    
+create_database()
+app = LoginSignupApp()
+app.run()
+
+def show_users():
+    conn = sqlite3.connect("users.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users")
+    users = cursor.fetchall()
+    conn.close()
+    for user in users:
+        print(user)
+
+show_users()
