@@ -83,8 +83,8 @@ class LoginSignupApp:
     # main loop of running the game : 
     def run(self):
         running = True
-        self.error_message = ""  # متغیر برای ذخیره پیام خطا
-        error_timer = 0  # متغیر برای زمان نمایش پیام
+        self.error_message = ""  
+        error_timer = 0  
         
         while running:
             time_delta = self.clock.tick(30) / 1000.0
@@ -101,7 +101,7 @@ class LoginSignupApp:
 
                         if not username or not password or not email:
                             self.error_message = "All fields are required!"
-                            error_timer = pygame.time.get_ticks()  # ذخیره زمان فعلی
+                            error_timer = pygame.time.get_ticks()  
                         else:
                             success, msg = self.user_manager.signup(username, password, email)
                             self.error_message = msg
