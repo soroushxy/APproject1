@@ -94,6 +94,20 @@ extra_time1 =  Extra_time()
 extra_time1_value = True
 extra_time2 = Extra_time()
 extra_time2_value = True
+#blind player
+class Blind:
+    def __init__(self ):
+        self.blind = pygame.image.load('graphics/blindfold.png').convert_alpha()
+        self.blind = pygame.transform.scale(self.blind , (50,50))
+        self.blind_rect = self.blind.get_rect(center=(random.randint(20,820),random.randint(20,380)))
+blind1_20 = Blind()
+blind1_20_value = True
+blind1_60  = Blind()
+blind1_60_value = True
+blind2_20 = Blind()
+blind2_20_value = True
+blind2_60 = Blind()
+blind2_60_value = True
 
 #aim values
 aim1_shoot = False
@@ -121,8 +135,7 @@ def end_game():
         if Player2.score > Player1.score:
             print(f'{Player2.name} won!')
             exit()
-
-
+Player1.score =10000
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -203,6 +216,30 @@ while True:
     if extra_bullet2.extra_bullet_rect.colliderect(aim2.rect) and aim2_shoot and extra_bullet2_value and Player2.bullet < 6:
         Player2.bullet += 5
         extra_bullet2_value = False
+    if blind1_20.blind_rect.colliderect(aim1.rect) and aim1_shoot and blind1_20_value and Player1.score >= 20:
+        aim2 = Aim(random.randint(20,820),random.randint(20,380), Player2.color)
+        blind1_20_value = False
+    if blind1_20.blind_rect.colliderect(aim2.rect) and aim2_shoot and blind1_20_value and Player1.score >= 20:
+        aim1 = Aim(random.randint(20,820),random.randint(20,380) , Player1.color)   
+        blind1_20_value = False
+    if blind2_20.blind_rect.colliderect(aim1.rect) and aim1_shoot and blind2_20_value and Player2.score >= 20:
+        aim2 = Aim(random.randint(20,820),random.randint(20,380), Player2.color)
+        blind2_20_value = False
+    if blind2_20.blind_rect.colliderect(aim2.rect) and aim2_shoot and blind2_20_value and Player2.score >= 20:
+        aim1 = Aim(random.randint(20,820),random.randint(20,380), Player1.color)
+        blind2_20_value = False
+    if blind1_60.blind_rect.colliderect(aim1.rect) and aim1_shoot and blind1_60_value and Player1.score >= 60:
+        aim2 = Aim(random.randint(20,820),random.randint(20,380), Player2.color)
+        blind1_60_value = False
+    if blind1_60.blind_rect.colliderect(aim2.rect) and aim2_shoot and blind1_60_value and Player1.score >= 60:
+        aim1 = Aim(random.randint(20,820),random.randint(20,380) , Player1.color)
+        blind1_60_value = False
+    if blind2_60.blind_rect.colliderect(aim1.rect) and aim1_shoot and blind2_60_value and Player2.score >= 60:
+        aim2 = Aim(random.randint(20,820),random.randint(20,380), Player2.color)
+        blind2_60_value = False
+    if blind2_60.blind_rect.colliderect(aim2.rect) and aim2_shoot and blind2_60_value and Player2.score >= 60:
+        aim1 = Aim(random.randint(20,820),random.randint(20,380), Player1.color)
+        blind2_60_value = False
 
     screen.fill('white')   
     if Player1.time < 40 and extra_time1_value :
@@ -213,6 +250,16 @@ while True:
         screen.blit(extra_bullet1.extra_bullet , extra_bullet1.extra_bullet_rect)
     if Player2.bullet < 6 and extra_bullet2_value:
         screen.blit(extra_bullet2.extra_bullet , extra_bullet2.extra_bullet_rect)
+    if Player1.score >= 20 and blind1_20_value:
+        screen.blit(blind1_20.blind , blind1_20.blind_rect)
+    if Player2.score >= 20 and blind2_20_value:
+        screen.blit(blind2_20.blind , blind2_20.blind_rect)
+    if Player2.score >= 20 and blind2_20_value:
+        screen.blit(blind2_20.blind , blind2_20.blind_rect)
+    if Player1.score >= 60 and blind1_60_value:
+        screen.blit(blind1_60.blind , blind1_60.blind_rect)
+    if Player2.score >= 60 and blind2_60_value:
+        screen.blit(blind2_60.blind , blind2_60.blind_rect)
     Player1.status(210,10)
     Player2.status(210,20)
     screen.blit(apple1_surf, apple1_rect)
@@ -220,7 +267,6 @@ while True:
     screen.blit(apple3_surf, apple3_rect)
     for bullet in bullets:
         bullet.draw(screen)
-
     # screen.blit(bullet , bullet_rect)
     # screen.blit(extra_time , etime_rect)
     aim1_shoot = False
