@@ -77,8 +77,10 @@ class Extra_bullet:
         player.time += 10
 extra_bullet1 = Extra_bullet()
 extra_bullet1_value = True
+extra_bullet1_showvalue = False
 extra_bullet2 = Extra_bullet()
 extra_bullet2_value = True
+extra_bullet2_showvalue = False
 bullets = []
 #extra time
 class Extra_time:
@@ -92,8 +94,17 @@ class Extra_time:
 
 extra_time1 =  Extra_time()
 extra_time1_value = True
+extra_time1_showvalue = False
 extra_time2 = Extra_time()
 extra_time2_value = True
+extra_time2_showvalue = False
+extra_time3 = Extra_time()
+extra_time3_value = True
+extra_time3_showvalue = False
+extra_time4 = Extra_time()
+extra_time4_value = True
+extra_time4_showvalue = False
+
 #blind player
 class Blind:
     def __init__(self ):
@@ -135,7 +146,6 @@ def end_game():
         if Player2.score > Player1.score:
             print(f'{Player2.name} won!')
             exit()
-Player1.score =10000
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -184,38 +194,81 @@ while True:
     if apple3_rect.colliderect(aim2.rect) and aim2_shoot == True:
         Player2.collied()
         apple3_rect = apple3_surf.get_rect(center=(random.randint(20,820),random.randint(20,380)))
-    if extra_time1.extra_time_rect.colliderect(aim1.rect) and aim1_shoot and extra_time1_value and Player1.time < 40 :
+    counter1 = 1
+    if Player1.time < 40 and counter1 >0 :
+        extra_time1_showvalue =True
+        counter1-= 1
+    counter2 = 1
+    if Player2.time < 40 and counter2 >0 :
+        extra_time2_showvalue = True
+        counter2 -= 1
+    counter3 = 1
+    if Player1.time <20 and counter3 >0:
+        extra_time3_showvalue = True
+        counter3 -=1
+    counter4 = 1
+    if Player2.time < 20 and counter4 > 0:
+        extra_time4_showvalue = True
+        counter4 -= 1
+    if extra_time1.extra_time_rect.colliderect(aim1.rect) and aim1_shoot and extra_time1_value and extra_time1_showvalue :
         Player1.time += 10
         extra_time1_value = False
-        # if Player1.time > 40:
-        #     extra_time1_value = True
-    if extra_time1.extra_time_rect.colliderect(aim2.rect) and aim2_shoot and extra_time1_value and Player1.time < 40 :
+        extra_time1_showvalue = False
+
+    if extra_time1.extra_time_rect.colliderect(aim2.rect) and aim2_shoot and extra_time1_value and extra_time1_showvalue :
         Player2.time += 10
         extra_time1_value = False
-        # if Player2.time > 40:
-        #     extra_time1_value = True
-    if extra_time2.extra_time_rect.colliderect(aim1.rect) and aim1_shoot and extra_time2_value and Player2.time < 40 :
+        extra_time1_showvalue = False
+
+    if extra_time2.extra_time_rect.colliderect(aim1.rect) and aim1_shoot and extra_time2_value and extra_time2_showvalue :
         Player1.time += 10
         extra_time2_value = False
-        # if Player1.time > 40:
-        #     extra_time2_value = True
-    if extra_time2.extra_time_rect.colliderect(aim2.rect) and aim2_shoot and extra_time2_value and Player2.time < 40 :
+        extra_time2_showvalue = False
+    if extra_time2.extra_time_rect.colliderect(aim2.rect) and aim2_shoot and extra_time2_value and extra_time2_showvalue :
         Player2.time += 10
         extra_time2_value = False
-        # if Player2.time > 40 :
-        #     extra_time2_value = True
-    if extra_bullet1.extra_bullet_rect.colliderect(aim1.rect) and aim1_shoot and extra_bullet1_value and Player1.bullet < 6:
+        extra_time2_showvalue = False
+    if extra_time3.extra_time_rect.colliderect(aim1.rect) and aim1_shoot and extra_time3_value and extra_time3_showvalue :
+        Player1.time += 10
+        extra_time3_value = False
+        extra_time3_showvalue = False
+    if extra_time3.extra_time_rect.colliderect(aim2.rect) and aim2_shoot and extra_time3_value and extra_time3_showvalue :
+        Player2.time += 10
+        extra_time3_value = False
+        extra_time3_showvalue = False
+    if extra_time4.extra_time_rect.colliderect(aim1.rect) and aim1_shoot and extra_time4_value and extra_time4_showvalue :
+        Player1.time += 10
+        extra_time4_value = False
+        extra_time4_showvalue = False
+    if extra_time4.extra_time_rect.colliderect(aim2.rect) and aim2_shoot and extra_time4_value and extra_time4_showvalue :
+        Player2.time += 10
+        extra_time4_value = False
+        extra_time4_showvalue = False
+
+    counter5 = 1
+    if Player1.bullet <= 5 and counter5 > 0 :
+        extra_bullet1_showvalue = True
+        counter5 -= 1
+    counter6 = 1
+    if Player2.bullet <= 5 and counter6 >0 :
+        extra_bullet2_showvalue = True
+        counter6 -= 1
+    if extra_bullet1.extra_bullet_rect.colliderect(aim1.rect) and aim1_shoot and extra_bullet1_value and extra_bullet1_showvalue:
         Player1.bullet += 5
-        extra_bullet1_value = False
-    if extra_bullet1.extra_bullet_rect.colliderect(aim2.rect) and aim2_shoot and extra_bullet1_value and Player1.bullet < 6:
+        extra_bullet1_value = False  
+        extra_bullet1_showvalue = False  
+    if extra_bullet1.extra_bullet_rect.colliderect(aim2.rect) and aim2_shoot and extra_bullet1_value and extra_bullet1_showvalue:
         Player2.bullet += 5
         extra_bullet1_value =False
-    if extra_bullet2.extra_bullet_rect.colliderect(aim1.rect) and aim1_shoot and extra_bullet2_value and Player2.bullet < 6:
+        extra_bullet1_showvalue = False
+    if extra_bullet2.extra_bullet_rect.colliderect(aim1.rect) and aim1_shoot and extra_bullet2_value and extra_bullet2_showvalue:
         Player1.bullet += 5
         extra_bullet2_value = False
-    if extra_bullet2.extra_bullet_rect.colliderect(aim2.rect) and aim2_shoot and extra_bullet2_value and Player2.bullet < 6:
+        extra_bullet2_showvalue = False
+    if extra_bullet2.extra_bullet_rect.colliderect(aim2.rect) and aim2_shoot and extra_bullet2_value and extra_bullet2_showvalue:
         Player2.bullet += 5
         extra_bullet2_value = False
+        extra_bullet2_showvalue = False
     if blind1_20.blind_rect.colliderect(aim1.rect) and aim1_shoot and blind1_20_value and Player1.score >= 20:
         aim2 = Aim(random.randint(20,820),random.randint(20,380), Player2.color)
         blind1_20_value = False
@@ -242,13 +295,17 @@ while True:
         blind2_60_value = False
 
     screen.fill('white')   
-    if Player1.time < 40 and extra_time1_value :
+    if extra_time1_showvalue and extra_time1_value :
         screen.blit(extra_time1.extra_time , extra_time1.extra_time_rect)
-    if Player2.time < 40 and extra_time2_value:
+    if extra_time2_showvalue and extra_time2_value:
         screen.blit(extra_time2.extra_time , extra_time2.extra_time_rect)
-    if Player1.bullet < 6 and extra_bullet1_value:
+    if extra_time3_showvalue and extra_time3_value:
+        screen.blit(extra_time3.extra_time , extra_time3.extra_time_rect)
+    if extra_time4_showvalue and extra_time4_value:
+        screen.blit(extra_time4.extra_time , extra_time4.extra_time_rect)
+    if extra_bullet1_showvalue and extra_bullet1_value:
         screen.blit(extra_bullet1.extra_bullet , extra_bullet1.extra_bullet_rect)
-    if Player2.bullet < 6 and extra_bullet2_value:
+    if extra_bullet2_showvalue and extra_bullet2_value:
         screen.blit(extra_bullet2.extra_bullet , extra_bullet2.extra_bullet_rect)
     if Player1.score >= 20 and blind1_20_value:
         screen.blit(blind1_20.blind , blind1_20.blind_rect)
@@ -267,8 +324,7 @@ while True:
     screen.blit(apple3_surf, apple3_rect)
     for bullet in bullets:
         bullet.draw(screen)
-    # screen.blit(bullet , bullet_rect)
-    # screen.blit(extra_time , etime_rect)
+
     aim1_shoot = False
     aim2_shoot = False
     time_manager()
