@@ -163,6 +163,8 @@ def time_manager():
             Player1.time =0
         if Player2.time <0:
             Player2.time = 0
+Player1.bullet = 10000
+Player2.bullet = 10000
 
 def end_game():
     if (Player1.time == 0 and Player2.time == 0 ) or (Player1.bullet == 0 and Player2.bullet ==0):
@@ -188,22 +190,25 @@ while True:
             pygame.quit()
             exit()
         if event.type == pygame.KEYDOWN:
-            if event.key  == pygame.K_LEFT:
-                aim1.move(-8 , 0)
-            if event.key == pygame.K_RIGHT:
-                aim1.move(8 , 0)
-            if event.key == pygame.K_DOWN:
-                aim1.move(0 , 8)
-            if event.key == pygame.K_UP:
-                aim1.move(0 , -8)
-            if event.key == pygame.K_w:
-                aim2.move(0,-8)
-            if event.key == pygame.K_s:
-                aim2.move(0,8)
-            if event.key == pygame.K_d:
-                aim2.move(8 , 0)
-            if event.key == pygame.K_a:
-                aim2.move(-8,0)
+            # Player 1 controls
+            if event.key == pygame.K_LEFT and aim1.rect.left - 8 > 0:  # Check left edge
+                aim1.move(-8, 0)
+            if event.key == pygame.K_RIGHT and aim1.rect.right + 8 < 840:  # Check right edge
+                aim1.move(8, 0)
+            if event.key == pygame.K_DOWN and aim1.rect.bottom + 8 < 400:  # Check bottom edge
+                aim1.move(0, 8)
+            if event.key == pygame.K_UP and aim1.rect.top - 8 > 20:  # Check top edge
+                aim1.move(0, -8)
+
+            # Player 2 controls
+            if event.key == pygame.K_w and aim2.rect.top - 8 > 20:  # Check top edge
+                aim2.move(0, -8)
+            if event.key == pygame.K_s and aim2.rect.bottom + 8 < 400:  # Check bottom edge
+                aim2.move(0, 8)
+            if event.key == pygame.K_d and aim2.rect.right + 8 < 840:  # Check right edge
+                aim2.move(8, 0)
+            if event.key == pygame.K_a and aim2.rect.left - 8 > 0:  # Check left edge
+                aim2.move(-8, 0)
             if event.key == pygame.K_TAB and Player2.bullet >0 and Player2.time > 0:
                 aim2_shoot = True
                 Player2.bullet -= 1
