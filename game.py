@@ -1,5 +1,24 @@
 import pygame
 import random
+import math
+
+def calculate_extra_points(last_shot_pos, new_shot_pos):
+    if last_shot_pos is None: 
+        return 0
+    distance = math.sqrt((new_shot_pos[0] - last_shot_pos[0])**2 + (new_shot_pos[1] - last_shot_pos[1])**2)
+    if distance >=400:
+        return 5
+    elif distance >= 300:
+        return 4
+    elif distance >= 200:
+        return 3
+    elif distance >= 100:
+        return 2
+    elif distance >= 50:
+        return 1
+    else:
+        return 0
+
 
 pygame.init()
 
@@ -32,11 +51,12 @@ class Player:
         txt_rect = txt.get_rect(center=(x,y))
         screen.blit(txt , txt_rect)
 
-    def collied(self):
-        self.score += 10
+
 
 class Bullet:
     def __init__(self, x, y, color):
+        self.x = x
+        self.y = y
         self.rect = pygame.Rect(x, y, 5, 5)  # Bullet size
         self.color = color
 
@@ -45,7 +65,9 @@ class Bullet:
 
 
 Player1 = Player('soroush' ,'red' , 60 , 0 , 10)
+Player1_last_pos = None
 Player2 = Player('karen' , 'blue' , 60 , 0 , 10)
+Player2_last_pos = None
 
 # Aim class
 class Aim:
@@ -151,6 +173,16 @@ def end_game():
             print(f'{Player2.name} won!')
             exit()
 while True:
+      
+    for i in range(len(bullets)-1,-1,-1):
+        if bullets[i].color == Player1.color:
+            Player1_last_pos = (bullets[i].x , bullets[i].y) 
+            break
+    for i in range(len(bullets)-1,-1,-1):
+        if bullets[i].color == Player2.color:
+            Player2_last_pos = (bullets[i].x , bullets[i].y) 
+            break
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -182,23 +214,30 @@ while True:
                 Player1.bullet -= 1
                 shoot_sound.play()
                 bullets.append(Bullet(aim1.rect.x , aim1.rect.y , Player1.color))
+    
     if apple1_rect.colliderect(aim1.rect) and aim1_shoot == True:
-        Player1.collied()
+        extra_point = calculate_extra_points(Player1_last_pos , (aim1.rect.x , aim1.rect.y))
+        Player1.score += (10+extra_point)
         apple1_rect = apple1_surf.get_rect(center=(random.randint(20,820),random.randint(20,380)))
     if apple2_rect.colliderect(aim1.rect) and aim1_shoot == True:
-        Player1.collied()
+        extra_point = calculate_extra_points(Player1_last_pos , (aim1.rect.x , aim1.rect.y))
+        Player1.score += (10+extra_point)
         apple2_rect = apple2_surf.get_rect(center=(random.randint(20,820),random.randint(20,380)))
     if apple3_rect.colliderect(aim1.rect) and aim1_shoot == True:
-        Player1.collied()
+        extra_point = calculate_extra_points(Player1_last_pos , (aim1.rect.x , aim1.rect.y))
+        Player1.score += (10+extra_point)
         apple3_rect = apple3_surf.get_rect(center=(random.randint(20,820),random.randint(20,380)))
     if apple1_rect.colliderect(aim2.rect) and aim2_shoot == True:
-        Player2.collied()
+        extra_point = calculate_extra_points(Player2_last_pos , (aim2.rect.x , aim2.rect.y))
+        Player2.score += (10+extra_point)
         apple1_rect = apple1_surf.get_rect(center=(random.randint(20,820),random.randint(20,380)))
     if apple2_rect.colliderect(aim2.rect) and aim2_shoot == True:
-        Player2.collied()
+        extra_point = calculate_extra_points(Player2_last_pos , (aim2.rect.x , aim2.rect.y))
+        Player2.score += (10+extra_point)
         apple2_rect = apple2_surf.get_rect(center=(random.randint(20,820),random.randint(20,380)))
     if apple3_rect.colliderect(aim2.rect) and aim2_shoot == True:
-        Player2.collied()
+        extra_point = calculate_extra_points(Player2_last_pos , (aim2.rect.x , aim2.rect.y))
+        Player2.score += (10+extra_point)
         apple3_rect = apple3_surf.get_rect(center=(random.randint(20,820),random.randint(20,380)))
     counter1 = 1
     if Player1.time < 40 and counter1 >0 :
@@ -303,7 +342,6 @@ while True:
     if blind2_60.blind_rect.colliderect(aim2.rect) and aim2_shoot and blind2_60_value and Player2.score >= 60:
         aim1 = Aim(random.randint(20,820),random.randint(20,380), Player1.color)
         blind2_60_value = False
-
     screen.fill('white')   
     if extra_time1_showvalue and extra_time1_value :
         screen.blit(extra_time1.extra_time , extra_time1.extra_time_rect)
