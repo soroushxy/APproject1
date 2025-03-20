@@ -13,6 +13,10 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 # Define font
 text_font = pygame.font.Font(r'font\Novecentosanswide-DemiBold.otf' , 14)
+#sound base
+shoot_sound = pygame.mixer.Sound('sound/gunshot-hard-sound-fx_B_minor.wav')
+reload_sound = pygame.mixer.Sound('sound/gun-reloading-fx.wav')
+
 #player class
 class Player:
     def __init__(self,name ,color , time , score , bullet ):
@@ -168,13 +172,15 @@ while True:
                 aim2.move(8 , 0)
             if event.key == pygame.K_a:
                 aim2.move(-8,0)
-            if event.key == pygame.K_TAB and Player2.bullet >0:
+            if event.key == pygame.K_TAB and Player2.bullet >0 and Player2.time > 0:
                 aim2_shoot = True
                 Player2.bullet -= 1
+                shoot_sound.play()
                 bullets.append(Bullet(aim2.rect.x , aim2.rect.y , Player2.color))
-            if event.key == pygame.K_SPACE and Player1.bullet >0 :
+            if event.key == pygame.K_SPACE and Player1.bullet >0 and Player1.time >0 :
                 aim1_shoot = True
                 Player1.bullet -= 1
+                shoot_sound.play()
                 bullets.append(Bullet(aim1.rect.x , aim1.rect.y , Player1.color))
     if apple1_rect.colliderect(aim1.rect) and aim1_shoot == True:
         Player1.collied()
@@ -257,18 +263,22 @@ while True:
         Player1.bullet += 5
         extra_bullet1_value = False  
         extra_bullet1_showvalue = False  
+        reload_sound.play()
     if extra_bullet1.extra_bullet_rect.colliderect(aim2.rect) and aim2_shoot and extra_bullet1_value and extra_bullet1_showvalue:
         Player2.bullet += 5
         extra_bullet1_value =False
         extra_bullet1_showvalue = False
+        reload_sound.play()
     if extra_bullet2.extra_bullet_rect.colliderect(aim1.rect) and aim1_shoot and extra_bullet2_value and extra_bullet2_showvalue:
         Player1.bullet += 5
         extra_bullet2_value = False
         extra_bullet2_showvalue = False
+        reload_sound.play()
     if extra_bullet2.extra_bullet_rect.colliderect(aim2.rect) and aim2_shoot and extra_bullet2_value and extra_bullet2_showvalue:
         Player2.bullet += 5
         extra_bullet2_value = False
         extra_bullet2_showvalue = False
+        reload_sound.play()
     if blind1_20.blind_rect.colliderect(aim1.rect) and aim1_shoot and blind1_20_value and Player1.score >= 20:
         aim2 = Aim(random.randint(20,820),random.randint(20,380), Player2.color)
         blind1_20_value = False
