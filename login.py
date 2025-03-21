@@ -1,6 +1,7 @@
 import sqlite3
 import pygame
 import pygame_gui
+import re
 
 # Create database and user table
 def create_database():
@@ -14,12 +15,30 @@ def create_database():
     conn.commit()
     conn.close()
 
+
+# add some functions for check the inputs. valid or not
+def is_valid_email(email):
+    return re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email) is not None
+
+def is_valid_username(username):
+    return len(username) >= 8
+
+def is_valid_password(password):
+    return len(password) >= 8
+
 # User management class
 class UserManager:
     def __init__(self, db_name="users.db"):
         self.db_name = db_name
 
     def signup(self, username, password, email):
+        if not is_valid_username(username):
+            return False, "Username must be at\n least 8 characters!"
+        if not is_valid_password(password):
+            return False, "Password must be at\n least 8 characters!"
+        if not is_valid_email(email):
+            return False, "Invalid email address!"
+
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         try:
@@ -28,7 +47,7 @@ class UserManager:
             conn.commit()
             return True, "Signup successful!"
         except sqlite3.IntegrityError:
-            return False, "Username or email\n  already exists!"
+            return False, "Username or email already exists!"
         finally:
             conn.close()
 
@@ -53,7 +72,6 @@ class LoginSignupApp:
         self.clock = pygame.time.Clock()
         self.user_manager = UserManager()
         self.background_image = pygame.image.load("midproject/images/background.jpg")
-
         self.background_image = pygame.transform.scale(self.background_image, (self.WIDTH, self.HEIGHT))
 
         self.create_signup_ui()
@@ -92,6 +110,7 @@ class LoginSignupApp:
             time_delta = self.clock.tick(30) / 1000.0
             # self.screen.fill((25, 50, 50))
             self.screen.blit(self.background_image, (0, 0))
+
             
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
