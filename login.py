@@ -2,7 +2,7 @@ import sqlite3
 import pygame
 import pygame_gui
 
-# creating database : 
+# Create database and user table
 def create_database():
     conn = sqlite3.connect("users.db")
     cursor = conn.cursor()
@@ -14,8 +14,7 @@ def create_database():
     conn.commit()
     conn.close()
 
-
-# create class for login and signup :
+# User management class
 class UserManager:
     def __init__(self, db_name="users.db"):
         self.db_name = db_name
@@ -43,7 +42,7 @@ class UserManager:
             return True, "Login successful!"
         return False, "Invalid username \n or password!"
 
-# start pygame and graphic
+# Main application class using Pygame
 class LoginSignupApp:
     def __init__(self):
         pygame.init()
@@ -53,6 +52,10 @@ class LoginSignupApp:
         self.manager = pygame_gui.UIManager((self.WIDTH, self.HEIGHT))
         self.clock = pygame.time.Clock()
         self.user_manager = UserManager()
+        self.background_image = pygame.image.load("midproject/images/background.jpg")
+
+        self.background_image = pygame.transform.scale(self.background_image, (self.WIDTH, self.HEIGHT))
+
         self.create_signup_ui()
 
     def create_signup_ui(self):
@@ -80,7 +83,6 @@ class LoginSignupApp:
         pygame.display.update()
         pygame.time.delay(3000)
 
-    # main loop of running the game : 
     def run(self):
         running = True
         self.error_message = ""  
@@ -88,7 +90,8 @@ class LoginSignupApp:
         
         while running:
             time_delta = self.clock.tick(30) / 1000.0
-            self.screen.fill((25, 50, 50))
+            # self.screen.fill((25, 50, 50))
+            self.screen.blit(self.background_image, (0, 0))
             
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -101,7 +104,7 @@ class LoginSignupApp:
 
                         if not username or not password or not email:
                             self.error_message = "All fields are required!"
-                            error_timer = pygame.time.get_ticks()  
+                            error_timer = pygame.time.get_ticks() 
                         else:
                             success, msg = self.user_manager.signup(username, password, email)
                             self.error_message = msg
@@ -146,7 +149,7 @@ class LoginSignupApp:
             pygame.display.update()
 
         pygame.quit()
-    
+
 create_database()
 app = LoginSignupApp()
 app.run()
