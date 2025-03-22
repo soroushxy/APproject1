@@ -71,7 +71,7 @@ class LoginSignupApp:
         self.manager = pygame_gui.UIManager((self.WIDTH, self.HEIGHT))
         self.clock = pygame.time.Clock()
         self.user_manager = UserManager()
-        self.background_image = pygame.image.load("midproject/images/background.jpg")
+        self.background_image = pygame.image.load("login graphics/photo_2025-03-22_19-49-35.jpg")
         self.background_image = pygame.transform.scale(self.background_image, (self.WIDTH, self.HEIGHT))
 
         self.create_signup_ui()
