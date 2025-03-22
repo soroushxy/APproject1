@@ -138,7 +138,7 @@ class LoginSignupApp:
                         password = self.password_entry.get_text().strip()
 
                         if not username or not password:
-                            self.error_message = "Username and password are required!"
+                            self.error_message = "Username and password\n          are required!"
                             error_timer = pygame.time.get_ticks()
                         else:
                             success, msg = self.user_manager.login(username, password)
