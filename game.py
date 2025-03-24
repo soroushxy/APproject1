@@ -376,6 +376,7 @@ def run_game(player1_name, player2_name):
         clock.tick(60)
     end = True
     while end:
+        end_font = pygame.font.Font(r'font\Novecentosanswide-DemiBold.otf', 20)  # Bigger size
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 end = False
@@ -392,19 +393,23 @@ def run_game(player1_name, player2_name):
                     end= False
                     main()
         screen.fill('white')
+        end_image = pygame.image.load('graphics/end.jpg')
+        end_image_rect = end_image.get_rect(center=(420, 200))
+        screen.blit(end_image, end_image_rect)
+
         if Player1.score > Player2.score:
-            winner_text = text_font.render(f'{Player1.name} WON! \n {Player1.name} score : {Player1.score} \n {Player2.name} score : {Player2.score}'  , False , 'black')
-            winner_text_rect = winner_text.get_rect(center=(420, 100))
+            winner_text = end_font.render(f'{Player1.name} WON! \n {Player1.name} score : {Player1.score} \n {Player2.name} score : {Player2.score}'  , False , 'red')
+            winner_text_rect = winner_text.get_rect(center=(420, 50))
             screen.blit(winner_text, winner_text_rect)
         elif Player1.score < Player2.score:
-            winner_text = text_font.render(f'{Player2.name} WON! \n {Player2.name} score : {Player2.score} \n {Player1.name} score : {Player1.score}'  , False , 'black')
-            winner_text_rect = winner_text.get_rect(center=(420, 100))
+            winner_text = end_font.render(f'{Player2.name} WON! \n {Player2.name} score : {Player2.score} \n {Player1.name} score : {Player1.score}'  , False , 'red')
+            winner_text_rect = winner_text.get_rect(center=(420, 50))
             screen.blit(winner_text, winner_text_rect)
         else:
-            winner_text = text_font.render(f'DRAW! \n {Player1.name} score : {Player1.score} \n {Player2.name} score : {Player2.score}'  , False , 'black')
-            winner_text_rect = winner_text.get_rect(center=(420, 100))
+            winner_text = end_font.render(f'DRAW! \n {Player1.name} score : {Player1.score} \n {Player2.name} score : {Player2.score}'  , False , 'red')
+            winner_text_rect = winner_text.get_rect(center=(420, 50))
             screen.blit(winner_text, winner_text_rect)
-        end_txt = text_font.render('Press E to exit press R to restart the game press L to go back to the login page', False, 'black')
+        end_txt = end_font.render('Press E to exit press R to restart the game press L to go back to the login page', False, 'yellow')
         end_txt_rect = end_txt.get_rect(center=(420, 300))
         screen.blit(end_txt , end_txt_rect)
         pygame.display.update()
@@ -430,4 +435,5 @@ def main():
         run_game(player1_name, player2_name)
     else:
         pygame.quit()
+        sys.exit()
 main()
