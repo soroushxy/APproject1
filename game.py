@@ -4,8 +4,6 @@ import math
 import login  # Direct import for login system
 import sys
 
-# Debug: Print the path of the imported login module
-print(f"Imported login.py from: {login.__file__}")
 
 def calculate_extra_points(last_shot_pos, new_shot_pos):
     if last_shot_pos is None: 
@@ -48,6 +46,7 @@ def run_game(player1_name, player2_name):
             self.time = time
             self.score = score
             self.bullet = bullet
+            self.last_shot_hit_apple = False 
         def status(self, x, y):
             txt = text_font.render(f'player:{self.name} , color:{self.color}  , time:{self.time}  , bullets:{self.bullet} , score :{self.score}', False, 'black')
             txt_rect = txt.get_rect(center=(x, y))
@@ -162,16 +161,8 @@ def run_game(player1_name, player2_name):
                 Player2.time = 0
 
     def end_game():
-        if (Player1.time == 0 and Player2.time == 0) or (Player1.bullet == 0 and Player2.bullet == 0):
-            if Player1.score > Player2.score:
-                print(f'{Player1.name} won!')
-                return True
-            elif Player2.score > Player1.score:
-                print(f'{Player2.name} won!')
-                return True
-            else:
-                print("It's a tie!")
-                return True
+        if (Player1.time == 0 or Player1.bullet == 0) and (Player2.bullet == 0 or Player2.time == 0):
+            return True
         return False
 
     # Main game loop
@@ -189,6 +180,7 @@ def run_game(player1_name, player2_name):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT and aim1.rect.left - 8 > 0:
                     aim1.move(-8, 0)
@@ -216,18 +208,30 @@ def run_game(player1_name, player2_name):
                     Player1.bullet -= 1
                     shoot_sound.play()
                     bullets.append(Bullet(aim1.rect.x, aim1.rect.y, Player1.color))
-        
+        hit_apple1 = False
+        hit_apple2 = False
         # Collision detection
         for apple in [apple1, apple2, apple3]:
             if apple.rect.colliderect(aim1.rect) and aim1_shoot:
                 extra_point = calculate_extra_points(Player1_last_pos, (aim1.rect.x, aim1.rect.y))
                 Player1.score += (10 + extra_point)
+                if Player1.last_shot_hit_apple:
+                    Player1.score += 2
+                Player1.last_shot_hit_apple = True
+                hit_apple1 = True
                 apple.rect.center = (random.randint(20, 820), random.randint(20, 380))
             if apple.rect.colliderect(aim2.rect) and aim2_shoot:
                 extra_point = calculate_extra_points(Player2_last_pos, (aim2.rect.x, aim2.rect.y))
                 Player2.score += (10 + extra_point)
+                if Player2.last_shot_hit_apple:
+                    Player2.score += 2
+                Player2.last_shot_hit_apple = True
+                hit_apple2 = True
                 apple.rect.center = (random.randint(20, 820), random.randint(20, 380))
-
+        if aim1_shoot and not hit_apple1:
+            Player1.last_shot_hit_apple = False
+        if aim2_shoot and not hit_apple2:
+            Player2.last_shot_hit_apple = False
         # Extra time spawning logic
         if Player1.time < 40 and counter1 > 0:
             extra_time1_showvalue = True
@@ -370,10 +374,43 @@ def run_game(player1_name, player2_name):
 
         pygame.display.update()
         clock.tick(60)
-    pygame.quit()
+    end = True
+    while end:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                end = False
+                pygame.quit
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_e:
+                    end = False
+                    pygame.quit
+                    sys.exit()
+                elif event.key == pygame.K_r:
+                    end = False
+                    run_game(Player1.name , Player2.name)
+                elif event.key == pygame.K_l:
+                    end= False
+                    main()
+        screen.fill('white')
+        if Player1.score > Player2.score:
+            winner_text = text_font.render(f'{Player1.name} WON! \n {Player1.name} score : {Player1.score} \n {Player2.name} score : {Player2.score}'  , False , 'black')
+            winner_text_rect = winner_text.get_rect(center=(420, 100))
+            screen.blit(winner_text, winner_text_rect)
+        elif Player1.score < Player2.score:
+            winner_text = text_font.render(f'{Player2.name} WON! \n {Player2.name} score : {Player2.score} \n {Player1.name} score : {Player1.score}'  , False , 'black')
+            winner_text_rect = winner_text.get_rect(center=(420, 100))
+            screen.blit(winner_text, winner_text_rect)
+        else:
+            winner_text = text_font.render(f'DRAW! \n {Player1.name} score : {Player1.score} \n {Player2.name} score : {Player2.score}'  , False , 'black')
+            winner_text_rect = winner_text.get_rect(center=(420, 100))
+            screen.blit(winner_text, winner_text_rect)
+        end_txt = text_font.render('Press E to exit press R to restart the game press L to go back to the login page', False, 'black')
+        end_txt_rect = end_txt.get_rect(center=(420, 300))
+        screen.blit(end_txt , end_txt_rect)
+        pygame.display.update()
 
 # Main execution
-if __name__ == "__main__":
+def main():
     # Login for Player 1
     app1 = login.LoginSignupApp(1)  # Use explicit module reference
     success1, player1_name = app1.run()
@@ -393,3 +430,4 @@ if __name__ == "__main__":
         run_game(player1_name, player2_name)
     else:
         pygame.quit()
+main()
