@@ -438,19 +438,22 @@ def main():
         pygame.quit()
         sys.exit()
 
-    # Login for Player 2
-    app2 = login.LoginSignupApp(2)
-    success2, player2_name = app2.run()
-    if not success2:
-        pygame.quit()
-        sys.exit()
+    while True:
+        # Login for Player 2
+        app2 = login.LoginSignupApp(2)
+        success2, player2_name = app2.run()
+        if not success2:
+            pygame.quit()
+            sys.exit()
+
+        if player1_name == player2_name:
+            print("Player 2's username cannot be the same as Player 1's username. Please try again.")
+        else:
+            break
 
     # Run game with both player names if both logins succeed
-    if success1 and success2:
-        run_game(player1_name, player2_name)
-    else:
-        pygame.quit()
-        sys.exit()
+    run_game(player1_name, player2_name)
+
 
 if __name__ == "__main__":
     main()
