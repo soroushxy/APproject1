@@ -20,7 +20,7 @@ def is_valid_email(email):
     return re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email) is not None
 
 def is_valid_username(username):
-    return len(username) >= 8
+    return len(username) >= 5
 
 def is_valid_password(password):
     return len(password) >= 8
@@ -31,7 +31,7 @@ class UserManager:
 
     def signup(self, username, password, email):
         if not is_valid_username(username):
-            return False, "Username must be at\n least 8 characters!"
+            return False, "Username must be at\n least 5 characters!"
         if not is_valid_password(password):
             return False, "Password must be at\n least 8 characters!"
         if not is_valid_email(email):
