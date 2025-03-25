@@ -55,7 +55,7 @@ def display_leaderboard(screen):
     # Display top scores
     y = 100
     for i, (player_name, score) in enumerate(top_scores, 1):
-        entry = leaderboard_font.render(f"{i}. {player_name}: {score}", True, 'white')
+        entry = leaderboard_font.render(f"{i}. {player_name}: {score}", True, 'black')
         entry_rect = entry.get_rect(center=(420, y))
         screen.blit(entry, entry_rect)
         y += 40
