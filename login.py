@@ -2,9 +2,8 @@ import sqlite3
 import pygame
 import pygame_gui
 import re
+import bcrypt  
 
-# Version check to confirm this is the correct file
-print("Loading login.py - Version with player_number support (2025-03-23)")
 
 def create_database():
     conn = sqlite3.connect("users.db")
@@ -38,11 +37,13 @@ class UserManager:
         if not is_valid_email(email):
             return False, "Invalid email address!"
 
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
         try:
             cursor.execute("INSERT INTO users (username, password, email) VALUES (?, ?, ?)",
-                           (username, password, email))
+                           (username, hashed_password, email))
             conn.commit()
             return True, "Signup successful!"
         except sqlite3.IntegrityError:
@@ -53,15 +54,21 @@ class UserManager:
     def login(self, username, password):
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
+        cursor.execute("SELECT password FROM users WHERE username = ?", (username,))
         user = cursor.fetchone()
         conn.close()
         if user:
-            return True, "Login successful!"
+            # Retrieve the stored hashed password (as bytes)
+            stored_hashed_password = user[0]
+            # Check if the provided password matches the stored hash
+            if isinstance(stored_hashed_password, str):  # Handle case where password might be stored as string
+                stored_hashed_password = stored_hashed_password.encode('utf-8')
+            if bcrypt.checkpw(password.encode('utf-8'), stored_hashed_password):
+                return True, "Login successful!"
         return False, "Invalid username \n or password!"
 
 class LoginSignupApp:
-    def __init__(self, player_number):  # Explicitly accept player_number
+    def __init__(self, player_number):  
         print(f"Initializing LoginSignupApp for Player {player_number}")
         pygame.init()
         self.WIDTH, self.HEIGHT = 400, 500
@@ -156,7 +163,7 @@ class LoginSignupApp:
             pygame.quit()
         return self.logged_in, self.username
 
-# Create database when module is imported
+
 create_database()
 
 if __name__ == "__main__":

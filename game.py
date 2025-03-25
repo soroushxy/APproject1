@@ -3,6 +3,8 @@ import random
 import math
 import login  # Direct import for login system
 import sys
+import leaderboard as lb
+
 
 
 def calculate_extra_points(last_shot_pos, new_shot_pos):
@@ -208,6 +210,7 @@ def run_game(player1_name, player2_name):
                     Player1.bullet -= 1
                     shoot_sound.play()
                     bullets.append(Bullet(aim1.rect.x, aim1.rect.y, Player1.color))
+
         hit_apple1 = False
         hit_apple2 = False
         # Collision detection
@@ -232,6 +235,7 @@ def run_game(player1_name, player2_name):
             Player1.last_shot_hit_apple = False
         if aim2_shoot and not hit_apple2:
             Player2.last_shot_hit_apple = False
+
         # Extra time spawning logic
         if Player1.time < 40 and counter1 > 0:
             extra_time1_showvalue = True
@@ -246,7 +250,7 @@ def run_game(player1_name, player2_name):
             extra_time4_showvalue = True
             counter4 -= 1
 
-        # Extra time collision (simple, working logic)
+        # Extra time collision
         if extra_time1_showvalue and extra_time1_value and extra_time1.rect.colliderect(aim1.rect) and aim1_shoot:
             extra_time1.collied(Player1)
             extra_time1_value = False
@@ -288,7 +292,7 @@ def run_game(player1_name, player2_name):
             extra_bullet2_showvalue = True
             counter6 -= 1
 
-        # Extra bullet collision (simple, working logic with reload sound)
+        # Extra bullet collision
         if extra_bullet1_showvalue and extra_bullet1_value and extra_bullet1.rect.colliderect(aim1.rect) and aim1_shoot:
             extra_bullet1.collied(Player1)
             extra_bullet1_value = False
@@ -370,61 +374,72 @@ def run_game(player1_name, player2_name):
         aim2_shoot = False
         time_manager()
         if end_game():
+            # Save scores when game ends
+            lb.save_score(Player1.name, Player1.score)
+            lb.save_score(Player2.name, Player2.score)
             running = False
 
         pygame.display.update()
         clock.tick(60)
+
+    # End game screen
     end = True
     while end:
-        end_font = pygame.font.Font(r'font\Novecentosanswide-DemiBold.otf', 20)  # Bigger size
+        end_font = pygame.font.Font(r'font\Novecentosanswide-DemiBold.otf', 20)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 end = False
-                pygame.quit
+                pygame.quit()
+                sys.exit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_e:
+                if event.key == pygame.K_e:  # Exit
                     end = False
-                    pygame.quit
+                    pygame.quit()
                     sys.exit()
-                elif event.key == pygame.K_r:
+                elif event.key == pygame.K_r:  # Restart
                     end = False
-                    run_game(Player1.name , Player2.name)
-                elif event.key == pygame.K_l:
-                    end= False
+                    run_game(Player1.name, Player2.name)
+                elif event.key == pygame.K_l:  # Back to login
+                    end = False
                     main()
+                elif event.key == pygame.K_b:  # Show leaderboard
+                    lb.display_leaderboard(screen)
+                    screen.fill('white')  # Redraw end screen after leaderboard
+
         screen.fill('white')
         end_image = pygame.image.load('graphics/end.jpg')
         end_image_rect = end_image.get_rect(center=(420, 200))
         screen.blit(end_image, end_image_rect)
 
         if Player1.score > Player2.score:
-            winner_text = end_font.render(f'{Player1.name} WON! \n {Player1.name} score : {Player1.score} \n {Player2.name} score : {Player2.score}'  , False , 'red')
+            winner_text = end_font.render(f'{Player1.name} WON!\n{Player1.name} score: {Player1.score}\n{Player2.name} score: {Player2.score}', False, 'red')
             winner_text_rect = winner_text.get_rect(center=(420, 50))
             screen.blit(winner_text, winner_text_rect)
         elif Player1.score < Player2.score:
-            winner_text = end_font.render(f'{Player2.name} WON! \n {Player2.name} score : {Player2.score} \n {Player1.name} score : {Player1.score}'  , False , 'red')
+            winner_text = end_font.render(f'{Player2.name} WON!\n{Player2.name} score: {Player2.score}\n{Player1.name} score: {Player1.score}', False, 'red')
             winner_text_rect = winner_text.get_rect(center=(420, 50))
             screen.blit(winner_text, winner_text_rect)
         else:
-            winner_text = end_font.render(f'DRAW! \n {Player1.name} score : {Player1.score} \n {Player2.name} score : {Player2.score}'  , False , 'red')
+            winner_text = end_font.render(f'DRAW!\n{Player1.name} score: {Player1.score}\n{Player2.name} score: {Player2.score}', False, 'red')
             winner_text_rect = winner_text.get_rect(center=(420, 50))
             screen.blit(winner_text, winner_text_rect)
-        end_txt = end_font.render('Press E to exit press R to restart the game press L to go back to the login page', False, 'yellow')
+
+        end_txt = end_font.render('Press E to exit, R to restart, L to login, B for leaderboard', False, 'yellow')
         end_txt_rect = end_txt.get_rect(center=(420, 300))
-        screen.blit(end_txt , end_txt_rect)
+        screen.blit(end_txt, end_txt_rect)
         pygame.display.update()
 
 # Main execution
 def main():
     # Login for Player 1
-    app1 = login.LoginSignupApp(1)  # Use explicit module reference
+    app1 = login.LoginSignupApp(1)
     success1, player1_name = app1.run()
     if not success1:
         pygame.quit()
         sys.exit()
 
     # Login for Player 2
-    app2 = login.LoginSignupApp(2)  # Use explicit module reference
+    app2 = login.LoginSignupApp(2)
     success2, player2_name = app2.run()
     if not success2:
         pygame.quit()
@@ -436,4 +451,6 @@ def main():
     else:
         pygame.quit()
         sys.exit()
-main()
+
+if __name__ == "__main__":
+    main()
